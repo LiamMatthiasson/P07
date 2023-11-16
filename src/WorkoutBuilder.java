@@ -170,20 +170,19 @@ public class WorkoutBuilder implements ListADT{
     else if (warmupCount == 0) {
       head = new LinkedExercise(newExercise, head);
     }
+    else if(primaryCount == 0 && cooldownCount == 0){
+      tail.setNext(newPrimary);
+      tail = newPrimary;
+    }
     else {
-      //index is the last spot of the warmups
-      int index = warmupCount - 1;
-      //if the index is the size - 1, that means its at the end of the list and therefore set it as
-      //tail
-      if (index == size - 1) {
-        tail.setNext(newPrimary);
-        tail = newPrimary;
-      }
-      else {
-          newPrimary.setNext(findAt(index).getNext());
-          findAt(index - 1).setNext(newPrimary);
-        if (index == size - 1) {
-          tail = newPrimary;
+      LinkedExercise current = head;
+      for(int i = 0; i < warmupCount - 1; i++){
+        if(current.getNext().getExercise().getType().equals(WorkoutType.PRIMARY)){
+          current.setNext(new LinkedExercise(newExercise, current.getNext()));
+        }
+        else if(current.getNext().getExercise().getType().equals(WorkoutType.COOLDOWN) &&
+            primaryCount == 0){
+          current.setNext(new LinkedExercise(newExercise, current.getNext()));
         }
       }
     }
@@ -345,7 +344,7 @@ public class WorkoutBuilder implements ListADT{
       return head;
     }
     LinkedExercise current = head;
-    for (int i = 0; i < index - 2; i++) {
+    for (int i = 0; i < index - 1; i++) {
       if (current == null || current.getNext() == null) {
         return null;
       }
