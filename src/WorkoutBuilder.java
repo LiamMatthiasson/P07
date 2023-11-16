@@ -65,11 +65,6 @@ public class WorkoutBuilder implements ListADT{
    * Removes all elements from this list. The list will be empty after this call returns.
    */
   public void clear() {
-    //if the head is null that must mean the list is empty
-    if(isEmpty()){
-      System.out.println("List is already empty");
-      return;
-    }
     head = null;
     tail = null;
     size = 0;
