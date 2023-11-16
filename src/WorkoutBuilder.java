@@ -69,15 +69,12 @@ public class WorkoutBuilder implements ListADT{
       System.out.println("List is already empty");
       return;
     }
-    //starts after the head and then we manually clear head?
-    LinkedExercise current = head.getNext();
     head = null;
-    //goes through the list (as long as its not null it continues)
-    while (current != null) {
-      LinkedExercise next = current.getNext();
-      current.setNext(null);
-      current = next;
-    }
+    tail = null;
+    size = 0;
+    warmupCount = 0;
+    primaryCount = 0;
+    cooldownCount = 0;
   }
   @Override
   public int indexOf(Object findObject) {
@@ -165,29 +162,40 @@ public class WorkoutBuilder implements ListADT{
     if(isEmpty()){
       head = newPrimary;
       tail = newPrimary;
+      primaryCount++;
+      size++;
     }
     //if the warmup count is 0 that means we can make the head the warmup
     else if (warmupCount == 0) {
       head = new LinkedExercise(newExercise, head);
+      primaryCount++;
+      size++;
     }
     else if(primaryCount == 0 && cooldownCount == 0){
       tail.setNext(newPrimary);
       tail = newPrimary;
+      primaryCount++;
+      size++;
     }
     else {
       LinkedExercise current = head;
-      for(int i = 0; i < warmupCount - 1; i++){
-        if(current.getNext().getExercise().getType().equals(WorkoutType.PRIMARY)){
-          current.setNext(new LinkedExercise(newExercise, current.getNext()));
+      while (current.getNext() != null) {
+        if (current.getNext().getExercise().getType() == WorkoutType.PRIMARY) {
+          newPrimary.setNext(current.getNext());
+          current.setNext(newPrimary);
+          primaryCount++;
+          size++;
+          return;
+        } else if (current.getNext().getExercise().getType() == WorkoutType.COOLDOWN && primaryCount == 0) {
+          newPrimary.setNext(current.getNext());
+          current.setNext(newPrimary);
+          primaryCount++;
+          size++;
+          return;
         }
-        else if(current.getNext().getExercise().getType().equals(WorkoutType.COOLDOWN) &&
-            primaryCount == 0){
-          current.setNext(new LinkedExercise(newExercise, current.getNext()));
-        }
+        current = current.getNext();
       }
     }
-    primaryCount++;
-    size++;
   }
 
   /**
@@ -278,15 +286,37 @@ public class WorkoutBuilder implements ListADT{
     return returned;
   }
   private Exercise removePrimary(){
-    Exercise returned = findAt(warmupCount-1).getExercise();
-    findAt(warmupCount - 1).setNext(findAt(warmupCount).getNext());
-    size--;
-    primaryCount--;
+    if (warmupCount == 0) {
+      Exercise returned = head.getExercise();
+      head = head.getNext();
+      size--;
+      primaryCount--;
+      return returned;
+    }
+    Exercise returned = findAt(warmupCount).getExercise();
+    LinkedExercise current = head;
+    while(current.getNext() != null){
+      if(current.getNext().getExercise().getType() == (WorkoutType.PRIMARY)) {
+        returned = current.getNext().getExercise();
+        current.setNext(current.getNext().getNext());
+        size--;
+        primaryCount--;
+        return returned;
+      }
+//    for(int i = 0; i < size; i++){
+//      if(current.getNext().getExercise().getType().equals(WorkoutType.PRIMARY)){
+//        returned = current.getNext().getExercise();
+//        current.setNext(current.getNext().getNext());
+//        size--;
+//        primaryCount--;
+//        return returned;
+//      }
+    }
     return returned;
   }
   private Exercise removeCooldown(){
-    Exercise returned = findAt(cooldownCount-1).getExercise();
-    findAt(cooldownCount-2).setNext(null);
+    Exercise returned = (Exercise)get(size-1);
+    findAt(size-1).setNext(null);
     cooldownCount--;
     size--;
     return returned;
