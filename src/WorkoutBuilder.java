@@ -295,22 +295,14 @@ public class WorkoutBuilder implements ListADT{
     }
     Exercise returned = findAt(warmupCount).getExercise();
     LinkedExercise current = head;
-    while(current.getNext() != null){
-      if(current.getNext().getExercise().getType() == (WorkoutType.PRIMARY)) {
+    for(int i = 0; i < size; i++){
+      if(current.getNext().getExercise().getType().equals(WorkoutType.PRIMARY)){
         returned = current.getNext().getExercise();
         current.setNext(current.getNext().getNext());
         size--;
         primaryCount--;
         return returned;
       }
-//    for(int i = 0; i < size; i++){
-//      if(current.getNext().getExercise().getType().equals(WorkoutType.PRIMARY)){
-//        returned = current.getNext().getExercise();
-//        current.setNext(current.getNext().getNext());
-//        size--;
-//        primaryCount--;
-//        return returned;
-//      }
     }
     return returned;
   }
