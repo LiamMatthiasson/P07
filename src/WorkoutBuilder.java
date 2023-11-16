@@ -110,7 +110,7 @@ public class WorkoutBuilder implements ListADT{
     for(int i = 1; i <= index; i++){
       current = current.getNext();
     }
-    return current;
+    return current.getExercise();
   }
 
   /**
@@ -166,17 +166,22 @@ public class WorkoutBuilder implements ListADT{
       head = newPrimary;
       tail = newPrimary;
     }
+    //if the warmup count is 0 that means we can make the head the warmup
     else if (warmupCount == 0) {
       head = new LinkedExercise(newExercise, head);
     }
     else {
+      //index is the last spot of the warmups
       int index = warmupCount - 1;
+      //if the index is the size - 1, that means its at the end of the list and therefore set it as
+      //tail
       if (index == size - 1) {
         tail.setNext(newPrimary);
         tail = newPrimary;
-      } else {
-        newPrimary.setNext(findAt(index).getNext());
-        findAt(index - 1).setNext(newPrimary);
+      }
+      else {
+          newPrimary.setNext(findAt(index).getNext());
+          findAt(index - 1).setNext(newPrimary);
         if (index == size - 1) {
           tail = newPrimary;
         }
@@ -298,17 +303,18 @@ public class WorkoutBuilder implements ListADT{
   public Exercise removeExercise(int exerciseID)
       throws NoSuchElementException{
     LinkedExercise current = head;
-    WorkoutType thisType = current.getExercise().getType();
+    WorkoutType thisType = null;
     int index = 0;
     for(int i = 0; i < size; i++){
       if(current.getExercise().getExerciseID() == exerciseID){
         index = i;
+        thisType = current.getExercise().getType();
         break;
       }
       current = current.getNext();
     }
-    if(current == null){
-      throw new NoSuchElementException("No exercises math that provided exerciseID number");
+    if(thisType == null){
+      throw new NoSuchElementException("No exercises match that provided exerciseID number");
     }
     if(size == 1){
       head = null;
@@ -339,7 +345,7 @@ public class WorkoutBuilder implements ListADT{
       return head;
     }
     LinkedExercise current = head;
-    for (int i = 0; i < index - 1; i++) {
+    for (int i = 0; i < index - 2; i++) {
       if (current == null || current.getNext() == null) {
         return null;
       }
