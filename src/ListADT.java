@@ -8,5 +8,4 @@ public interface ListADT <T> {
 	public T get(int index);
 	
 	public void add(T newObject);
-	
 }

@@ -1,3 +1,4 @@
+import javax.tools.ForwardingJavaFileManager;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -78,9 +79,10 @@ public class WorkoutBuilder implements ListADT{
   }
   @Override
   public int indexOf(Object findObject) {
+    Exercise find = (Exercise)findObject;
     LinkedExercise current = head;
     for(int i = 0; i < size; i++){
-      if(current.equals(findObject)){
+      if(current.getExercise().equals(findObject)){
         return i;
       }
       else{
@@ -99,7 +101,7 @@ public class WorkoutBuilder implements ListADT{
    * @return the exercise stored at the given index of this list
    */
   @Override
-  public Object get(int index) {
+  public Exercise get(int index) {
     if(index > size - 1){
       throw new IndexOutOfBoundsException("That index does not exist in this linked list");
     }
@@ -122,15 +124,15 @@ public class WorkoutBuilder implements ListADT{
    */
   @Override
   public void add(Object newObject) {
-    Exercise newExercise = (Exercise) newObject;
-    WorkoutType type = newExercise.getType();
+    Exercise added = (Exercise)newObject;
+    WorkoutType type = added.getType();
     if(type == WorkoutType.WARMUP){
-      addWarmup(newExercise);
+      addWarmup(added);
     } else if (type == WorkoutType.PRIMARY) {
-      addPrimary(newExercise);
+      addPrimary(added);
     }
     else {
-      addCooldown(newExercise);
+      addCooldown(added);
     }
   }
   /**
@@ -204,7 +206,7 @@ public class WorkoutBuilder implements ListADT{
    */
   private void addCooldown(Exercise newExercise){
     //create new LinkedExercise
-    LinkedExercise newCooldown = new LinkedExercise((Exercise) newExercise, null);
+    LinkedExercise newCooldown = new LinkedExercise(newExercise, null);
     //if the list is empty then both the head and tail should be set to the new object
     if(isEmpty()){
       head = newCooldown;
@@ -287,27 +289,25 @@ public class WorkoutBuilder implements ListADT{
   }
   private Exercise removePrimary(){
     if (warmupCount == 0) {
-      Exercise returned = head.getExercise();
+      Exercise removed = head.getExercise();
       head = head.getNext();
       size--;
       primaryCount--;
-      return returned;
+      return removed;
     }
-    Exercise returned = findAt(warmupCount).getExercise();
     LinkedExercise current = head;
     for(int i = 0; i < size; i++){
-      if(current.getNext().getExercise().getType().equals(WorkoutType.PRIMARY)){
-        returned = current.getNext().getExercise();
-        current.setNext(current.getNext().getNext());
-        size--;
-        primaryCount--;
-        return returned;
+      if(get(i).getType() == WorkoutType.PRIMARY){
+        Exercise removed = get(i);
+        findAt(i - 1).setNext(findAt(i).getNext());
+        return removed;
       }
     }
-    return returned;
+    throw new NoSuchElementException("No primary in list, cannot remove");
   }
   private Exercise removeCooldown(){
-    Exercise returned = (Exercise)get(size-1);
+    Exercise returned = tail.getExercise();
+    tail = findAt(size -1);
     findAt(size-1).setNext(null);
     cooldownCount--;
     size--;
@@ -323,26 +323,30 @@ public class WorkoutBuilder implements ListADT{
    */
   public Exercise removeExercise(int exerciseID)
       throws NoSuchElementException{
-    LinkedExercise current = head;
+    int index = -1;
     WorkoutType thisType = null;
-    int index = 0;
-    for(int i = 0; i < size; i++){
-      if(current.getExercise().getExerciseID() == exerciseID){
+    Exercise returned = null;
+    for(int i = 0; i < size; i ++){
+      if(get(i).getExerciseID() == exerciseID){
         index = i;
-        thisType = current.getExercise().getType();
+        thisType = get(i).getType();
+        returned = get(i);
         break;
       }
-      current = current.getNext();
     }
-    if(thisType == null){
+    if(index == -1){
       throw new NoSuchElementException("No exercises match that provided exerciseID number");
     }
     if(size == 1){
       head = null;
       tail = null;
-      return current.getExercise();
+      size--;
+    } else if (index == 0) {
+      head = head.getNext();
     }
-    findAt(index - 1).setNext(current.getNext());
+    else{
+      findAt(index - 1).setNext(findAt(index).getNext());
+    }
     if(thisType.equals(WorkoutType.WARMUP)){
       warmupCount--;
     } else if (thisType.equals(WorkoutType.PRIMARY)) {
@@ -352,12 +356,12 @@ public class WorkoutBuilder implements ListADT{
       cooldownCount--;
     }
     size--;
-    return current.getExercise();
+    return returned;
   }
 
   /**
    * helper method that returns the linked list located at a certain index
-   * parses through the list until it has reached the element at the element and subsequently returns
+   * parses through the list until it has reached  the element at the element and subsequently returns
    * @param index - the index which the desired element is located
    * @return LinkedExercise at the index specified by parameter
    */
@@ -366,7 +370,7 @@ public class WorkoutBuilder implements ListADT{
       return head;
     }
     LinkedExercise current = head;
-    for (int i = 0; i < index - 1; i++) {
+    for (int i = 0; i < index; i++) {
       if (current == null || current.getNext() == null) {
         return null;
       }

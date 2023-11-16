@@ -1,19 +1,32 @@
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 public class WorkoutBuilderTester {
   
   // checks for the correctness of the WorkoutBuilder.clear() method
- public static boolean testClear() {
+ public static boolean testClear(){
+   Exercise.resetIDNumbers();
+   //our empty workout builder
+   WorkoutBuilder a = new WorkoutBuilder();
+   //one that we will add exercises to
+   WorkoutBuilder b = new WorkoutBuilder();
+   //first see if it throws an exception properly
+   boolean case1 = false;
+   LinkedList<Exercise> actual = new LinkedList<Exercise>();
+
+
    return false;
  }
 
  // checks for the correctness of the WorkoutBuilder.add() method
  public static boolean testAddExercises() {
+
    return false;
  }
 
  // checks for the correctness of BOTH of the WorkoutBuilder.removeExercise() methods
  public static boolean testRemoveExercises() {
+
    return false;
  }
 
