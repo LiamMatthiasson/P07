@@ -1,3 +1,32 @@
+//////////////// WorkoutBuilderTester File Header //////////////////////////
+//
+// Title: Workout Builder
+// Course: CS 300 Fall 2023
+//
+// Author: Liam Matthiasson
+// Email: matthiasson@wisc.edu
+// Lecturer: Hobbes LeGault
+//
+//////////////////// PAIR PROGRAMMERS COMPLETE THIS SECTION ///////////////////
+//
+// Partner Name:    (name of your pair programming partner)
+// Partner Email:   (email address of your programming partner)
+// Partner Lecturer's Name: (name of your partner's lecturer)
+//
+// VERIFY THE FOLLOWING BY PLACING AN X NEXT TO EACH TRUE STATEMENT:
+//   ___ Write-up states that pair programming is allowed for this assignment.
+//   ___ We have both read and understand the course Pair Programming Policy.
+//   ___ We have registered our team prior to the team registration deadline.
+//
+///////////////////////// ALWAYS CREDIT OUTSIDE HELP //////////////////////////
+//
+// Persons: TA Office Hours
+// Online Sources:
+//
+//////////////////////////////////////////////////////////////////////////////
+
+
+
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
@@ -43,16 +72,16 @@ public class WorkoutBuilderTester {
    WorkoutBuilder a = new WorkoutBuilder();
    a.add(one);
    //check if no warmup no cooldown if added to front
-   boolean case1 = a.get(0).getExerciseID() == one.getExerciseID();
+   boolean case1 = a.get(0).equals(one);
    a.add(two);
    //check if it was added at back
-   boolean case2 = a.get(1).getExerciseID() == two.getExerciseID();
+   boolean case2 = a.get(1).equals(two);
    a.add(three);
    //check if it was added at front
-   boolean case3 = a.get(0).getExerciseID() == three.getExerciseID();
+   boolean case3 = a.get(0).equals(three);
    //check if it was added inbetween the two exercises
    a.add(four);
-   boolean case4 = a.get(1).getExerciseID() == four.getExerciseID();
+   boolean case4 = a.get(1).equals(four);
    return case1&&case2&&case3&&case4;
  }
 
@@ -66,47 +95,36 @@ public class WorkoutBuilderTester {
    actual.add(exercisePrimary);
    actual.add(exerciseWarmup);
    actual.add(exerciseCooldown);
-   //what we expect the outcome to be
-   WorkoutBuilder expectedForRemoveWarmup = new WorkoutBuilder();
-   expectedForRemoveWarmup.add(exerciseCooldown);
-   expectedForRemoveWarmup.add(exercisePrimary);
    //remove from the first one
-   actual.removeExercise(WorkoutType.WARMUP);
-   boolean case1 = actual.equals(expectedForRemoveWarmup);
+   boolean case1 = exerciseWarmup.equals(actual.removeExercise(WorkoutType.WARMUP));
+   if(!case1 || actual.getWarmupCount() != 0 || actual.size() != 2){
+     return false;
+   }
    //re-add back the warmup
    actual.add(exerciseWarmup);
-   WorkoutBuilder expectedForRemovePrimary = new WorkoutBuilder();
-   expectedForRemovePrimary.add(exerciseWarmup);
-   expectedForRemovePrimary.add(exerciseCooldown);
-   //remove from the array
-   actual.removeExercise(WorkoutType.PRIMARY);
-   boolean case2 = actual.equals(expectedForRemovePrimary);
-   //add it back in
+   boolean case2 = exercisePrimary.equals(actual.removeExercise(WorkoutType.PRIMARY));
+   if(!case2 || actual.getPrimaryCount() != 0 || actual.size() != 2){
+     return false;
+   }
+   //add back in
    actual.add(exercisePrimary);
-   WorkoutBuilder expectedForRemoveCooldown = new WorkoutBuilder();
-   expectedForRemoveCooldown.add(exercisePrimary);
-   expectedForRemoveCooldown.add(exerciseWarmup);
-   //check comparison
-   boolean case3 = actual.equals(expectedForRemoveCooldown);
+   boolean case3 = exerciseCooldown.equals(actual.removeExercise(WorkoutType.COOLDOWN));
+   if(!case3 || actual.getCooldownCount() != 0 || actual.size() != 2){
+     return false;
+   }
+   WorkoutBuilder id = new WorkoutBuilder();
    Exercise.resetIDNumbers();
-   //id numbers of 1 2 3 and 4
-   Exercise one = new Exercise(WorkoutType.PRIMARY, "Bench Press");
-   Exercise two = new Exercise(WorkoutType.COOLDOWN, "Child's Pose");
-   Exercise three = new Exercise(WorkoutType.WARMUP, "Jog");
-   Exercise four = new Exercise(WorkoutType.PRIMARY,"Squat");
-   WorkoutBuilder actualIDRemove = new WorkoutBuilder();
-   actualIDRemove.add(one);
-   actualIDRemove.add(two);
-   actualIDRemove.add(three);
-   actualIDRemove.add(four);
-   // so lets remove the one with ID number 3
-   actualIDRemove.removeExercise(3); //(meaning it should get rid of "jog" )
-   WorkoutBuilder expected = new WorkoutBuilder();
-   expected.add(one);
-   expected.add(two);
-   expected.add(four);
-   boolean case4 = actualIDRemove.equals(expected);
-   return case1&&case2&&case3&&case4;
+   Exercise one = new Exercise(WorkoutType.WARMUP, "Jog");
+   Exercise two = new Exercise(WorkoutType.PRIMARY, "Bench Press");
+   Exercise three = new Exercise(WorkoutType.COOLDOWN, "Child's Pose");
+   id.add(exercisePrimary);
+   id.add(exerciseWarmup);
+   id.add(exerciseCooldown);
+   boolean case4 = three.equals(id.removeExercise(3));
+   if(!case4 || actual.getCooldownCount() != 0 || actual.size() != 2){
+     return false;
+   }
+   return true;
  }
 
  // checks for the correctness of the WorkoutBuilder.get() method
@@ -127,7 +145,9 @@ public class WorkoutBuilderTester {
      case1 = true;
    }
    boolean case2 = a.get(0).equals(three);
-   return case1 && case2;
+   boolean case3 = a.get(3).equals(two);
+   boolean case4 = a.get(2).equals(one);
+   return case1 && case2 && case3 && case4;
  }
 
  // a test suite method to run all your test methods
@@ -141,14 +161,15 @@ public class WorkoutBuilderTester {
    System.out.println("test add: "+(add?"pass":"FAIL"));
    System.out.println("test remove: "+(remove?"pass":"FAIL"));
    System.out.println("test get: "+(get?"pass":"FAIL"));
-   
+
    // TODO: add calls to any other test methods you write
    
-   return false; // TODO: replace this with the correct value
+   return testClear() && testAddExercises() && testGetExercises() && testRemoveExercises();
  }
 
  public static void main(String[] args) {
-   runAllTests();
+   if (runAllTests()) System.out.println("all tests passed");
+   else System.out.println("not all tests passed");
    demo();
  }
 

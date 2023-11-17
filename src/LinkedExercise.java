@@ -1,3 +1,29 @@
+//////////////// LinkedExercise File Header //////////////////////////
+//
+// Title: Workout Builder
+// Course: CS 300 Fall 2023
+//
+// Author: Liam Matthiasson
+// Email: matthiasson@wisc.edu
+// Lecturer: Hobbes LeGault
+//
+//////////////////// PAIR PROGRAMMERS COMPLETE THIS SECTION ///////////////////
+//
+// Partner Name:    (name of your pair programming partner)
+// Partner Email:   (email address of your programming partner)
+// Partner Lecturer's Name: (name of your partner's lecturer)
+//
+// VERIFY THE FOLLOWING BY PLACING AN X NEXT TO EACH TRUE STATEMENT:
+//   ___ Write-up states that pair programming is allowed for this assignment.
+//   ___ We have both read and understand the course Pair Programming Policy.
+//   ___ We have registered our team prior to the team registration deadline.
+//
+///////////////////////// ALWAYS CREDIT OUTSIDE HELP //////////////////////////
+//
+// Persons: TA Office Hours
+// Online Sources:
+//
+//////////////////////////////////////////////////////////////////////////////
 public class LinkedExercise {
   //The Exercise contained in this linked node, which cannot be replaced after this node is created
   private Exercise exercise;

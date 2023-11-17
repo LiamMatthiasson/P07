@@ -1,3 +1,30 @@
+//////////////// WorkoutBuilder File Header //////////////////////////
+//
+// Title: Workout Builder
+// Course: CS 300 Fall 2023
+//
+// Author: Liam Matthiasson
+// Email: matthiasson@wisc.edu
+// Lecturer: Hobbes LeGault
+//
+//////////////////// PAIR PROGRAMMERS COMPLETE THIS SECTION ///////////////////
+//
+// Partner Name:    (name of your pair programming partner)
+// Partner Email:   (email address of your programming partner)
+// Partner Lecturer's Name: (name of your partner's lecturer)
+//
+// VERIFY THE FOLLOWING BY PLACING AN X NEXT TO EACH TRUE STATEMENT:
+//   ___ Write-up states that pair programming is allowed for this assignment.
+//   ___ We have both read and understand the course Pair Programming Policy.
+//   ___ We have registered our team prior to the team registration deadline.
+//
+///////////////////////// ALWAYS CREDIT OUTSIDE HELP //////////////////////////
+//
+// Persons: TA Office Hours
+// Online Sources:
+//
+//////////////////////////////////////////////////////////////////////////////
+
 import javax.tools.ForwardingJavaFileManager;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -72,6 +99,12 @@ public class WorkoutBuilder implements ListADT{
     primaryCount = 0;
     cooldownCount = 0;
   }
+
+  /**
+   * Finds the index of a given exercise in this WorkoutBuilder list, if it is present.
+   * @param findObject the exercise to search for in this list
+   * @return the index of this object in the list if it is present; -1 if it is not
+   */
   @Override
   public int indexOf(Object findObject) {
     Exercise find = (Exercise)findObject;
@@ -215,11 +248,11 @@ public class WorkoutBuilder implements ListADT{
     size++;
   }
   /**
-   * Removes an exercise of the provided type from the list, if one exists, and decrements the corresponding counter fields:
+   * Removes an exercise of the provided type from the list, if one exists, and decrements
+   * the corresponding counter fields:
    * WARMUP: removes the FIRST (head) element from the list
    * PRIMARY: removes the FIRST exercise of type PRIMARY from the list
    * COOLDOWN: removes the LAST (tail) element from the list
-   * You are encouraged to implement private helper methods for each of these cases as well, but this is not required. Be sure to check that there are any exercises with the given type present in the list, and remember to consider the case where you are removing the very last exercise from the entire list!
    * Parameters:
    * type - the type of exercise to remove from the list
    * Returns:
@@ -273,6 +306,10 @@ public class WorkoutBuilder implements ListADT{
     }
 
   }
+  /**
+   * helper method that removes an exercise of type warmup
+   * @return Exercise that was removed
+   */
   private Exercise removeWarmup(){
     Exercise returned = head.getExercise();
     LinkedExercise afterHead = head.getNext();
@@ -282,6 +319,10 @@ public class WorkoutBuilder implements ListADT{
     warmupCount--;
     return returned;
   }
+  /**
+   * helper method that removes an exercise of type Primary
+   * @return Exercise that was removed
+   */
   private Exercise removePrimary(){
     if (warmupCount == 0) {
       Exercise removed = head.getExercise();
@@ -295,11 +336,17 @@ public class WorkoutBuilder implements ListADT{
       if(get(i).getType() == WorkoutType.PRIMARY){
         Exercise removed = get(i);
         findAt(i - 1).setNext(findAt(i).getNext());
+        size--;
+        primaryCount--;
         return removed;
       }
     }
     throw new NoSuchElementException("No primary in list, cannot remove");
   }
+  /**
+   * helper method that removes an exercise of type Cooldown
+   * @return Exercise that was removed
+   */
   private Exercise removeCooldown(){
     Exercise returned = tail.getExercise();
     tail = findAt(size -1);
